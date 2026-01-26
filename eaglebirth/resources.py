@@ -354,3 +354,204 @@ class ImageProcessingResource(BaseResource):
             data=data,
             files=files if files else None
         )
+
+
+class StorageResource(BaseResource):
+    """Cloud Storage resource for managing files and directories"""
+
+    def __init__(self, client):
+        super().__init__(client)
+        self.directory = DirectoryResource(client)
+        self.file = FileResource(client)
+
+
+class DirectoryResource(BaseResource):
+    """Directory management operations"""
+
+    def create(self, path: str, private: str = 'no', directory_password: Optional[str] = None) -> Dict[str, Any]:
+        """Create a new directory"""
+        data = {'path': path, 'private': private}
+        if directory_password:
+            data['directory_password'] = directory_password
+        return self.client._make_request('POST', '/app/storage/directory/', data)
+
+    def delete(self, directory_id: Optional[str] = None, path: Optional[str] = None) -> Dict[str, Any]:
+        """Delete a directory and all its contents"""
+        data = {}
+        if directory_id:
+            data['directory_id'] = directory_id
+        if path:
+            data['path'] = path
+        return self.client._make_request('POST', '/app/storage/directory/delete_a_directory/', data)
+
+    def list_content(
+        self,
+        path: Optional[str] = None,
+        directory_id: Optional[str] = None,
+        token: Optional[str] = None,
+        directory_password: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """List contents of a directory"""
+        if path:
+            data = {'path': path}
+            if token:
+                data['token'] = token
+            if directory_password:
+                data['directory_password'] = directory_password
+            return self.client._make_request('POST', '/app/storage/directory/list_directory_content/', data)
+        elif directory_id:
+            data = {'directory_id': directory_id}
+            if token:
+                data['token'] = token
+            if directory_password:
+                data['directory_password'] = directory_password
+            return self.client._make_request('POST', '/app/storage/directory/list_directory_content_from_id/', data)
+        else:
+            raise ValueError("Either path or directory_id must be provided")
+
+    def update_password(
+        self,
+        directory_password: str,
+        directory_id: Optional[str] = None,
+        path: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Update or remove directory password"""
+        data = {'directory_password': directory_password}
+        if directory_id:
+            data['directory_id'] = directory_id
+        if path:
+            data['path'] = path
+        return self.client._make_request('POST', '/app/storage/directory/update_directory_password/', data)
+
+    def update_privacy(
+        self,
+        is_private: str,
+        directory_id: Optional[str] = None,
+        path: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Update directory privacy setting"""
+        data = {'is_private': is_private}
+        if directory_id:
+            data['directory_id'] = directory_id
+        if path:
+            data['path'] = path
+        return self.client._make_request('POST', '/app/storage/directory/update_directory_privacy/', data)
+
+
+class FileResource(BaseResource):
+    """File management operations"""
+
+    def upload(
+        self,
+        file: Union[str, BinaryIO],
+        path: str,
+        filename: Optional[str] = None,
+        private: str = 'no',
+        directory_password: Optional[str] = None,
+        file_password: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Upload a file"""
+        data = {'path': path, 'private': private}
+        if filename:
+            data['filename'] = filename
+        if directory_password:
+            data['directory_password'] = directory_password
+        if file_password:
+            data['file_password'] = file_password
+
+        files = {}
+        if isinstance(file, str):
+            files['file'] = file
+        else:
+            files['file'] = file
+
+        return self.client._make_request('POST', '/app/storage/file/', data, files)
+
+    def retrieve(
+        self,
+        file_id: Optional[str] = None,
+        path: Optional[str] = None,
+        token: Optional[str] = None,
+        password: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Retrieve file content"""
+        if file_id:
+            data = {'id': file_id}
+            if token:
+                data['token'] = token
+            if password:
+                data['password'] = password
+            return self.client._make_request('POST', '/app/storage/file/content_from_id/', data)
+        elif path:
+            params = {'path': path}
+            if token:
+                params['token'] = token
+            if password:
+                params['password'] = password
+            return self.client._make_request('GET', '/app/storage/file/content/', params=params)
+        else:
+            raise ValueError("Either file_id or path must be provided")
+
+    def delete(
+        self,
+        file_id: Optional[str] = None,
+        path: Optional[str] = None,
+        token: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Delete a file"""
+        data = {}
+        if file_id:
+            data['file_id'] = file_id
+        if path:
+            data['path'] = path
+        if token:
+            data['token'] = token
+        return self.client._make_request('POST', '/app/storage/file/delete_a_file/', data)
+
+    def update_password(
+        self,
+        password: str,
+        file_id: Optional[str] = None,
+        path: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Update or remove file password"""
+        data = {'password': password}
+        if file_id:
+            data['file_id'] = file_id
+        if path:
+            data['path'] = path
+        return self.client._make_request('POST', '/app/storage/file/update_file_password/', data)
+
+    def update_privacy(
+        self,
+        private: str,
+        file_id: Optional[str] = None,
+        path: Optional[str] = None,
+        refresh_token: str = 'no'
+    ) -> Dict[str, Any]:
+        """Update file privacy and optionally refresh access token"""
+        data = {'private': private, 'refresh_token': refresh_token}
+        if file_id:
+            data['file_id'] = file_id
+        if path:
+            data['path'] = path
+        return self.client._make_request('POST', '/app/storage/file/update_file_privacy/', data)
+
+
+class AuthenticationResource(BaseResource):
+    """Authentication resource for app sign-in and token management"""
+
+    def sign_in(self, client_id: str, secret_id: str) -> Dict[str, Any]:
+        """Authenticate app using client credentials"""
+        data = {'client_id': client_id, 'secret_id': secret_id}
+        return self.client._make_request('POST', '/app/sign_in/', data)
+
+    def get_token(self, username: str, password: str) -> Dict[str, Any]:
+        """Exchange user credentials for JWT tokens"""
+        data = {'username': username, 'password': password}
+        return self.client._make_request('POST', '/app/token/', data)
+
+    def refresh_token(self, refresh: str) -> Dict[str, Any]:
+        """Refresh an access token using a refresh token"""
+        data = {'refresh': refresh}
+        return self.client._make_request('POST', '/app/token/refresh/', data)

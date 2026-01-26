@@ -44,6 +44,8 @@ client.whatsapp.send(
 - **OTP/Verification** - Generate and validate one-time codes
 - **QR Code Generation** - Create customizable QR codes
 - **Vision AI** - Face detection, comparison, and OCR
+- **Cloud Storage** - File and directory management with privacy controls
+- **Authentication** - App sign-in and JWT token management
 
 ## Authentication
 

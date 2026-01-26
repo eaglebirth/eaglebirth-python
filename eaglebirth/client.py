@@ -12,6 +12,8 @@ from .resources import (
     OTPResource,
     QRCodeResource,
     ImageProcessingResource,
+    StorageResource,
+    AuthenticationResource,
 )
 
 
@@ -74,6 +76,8 @@ class EagleBirth:
         self.otp = OTPResource(self)
         self.qr = QRCodeResource(self)
         self.vision = ImageProcessingResource(self)
+        self.storage = StorageResource(self)
+        self.auth = AuthenticationResource(self)
 
     def _make_request(
         self,
