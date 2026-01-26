@@ -538,20 +538,3 @@ class FileResource(BaseResource):
         return self.client._make_request('POST', '/app/storage/file/update_file_privacy/', data)
 
 
-class AuthenticationResource(BaseResource):
-    """Authentication resource for app sign-in and token management"""
-
-    def sign_in(self, client_id: str, secret_id: str) -> Dict[str, Any]:
-        """Authenticate app using client credentials"""
-        data = {'client_id': client_id, 'secret_id': secret_id}
-        return self.client._make_request('POST', '/app/sign_in/', data)
-
-    def get_token(self, username: str, password: str) -> Dict[str, Any]:
-        """Exchange user credentials for JWT tokens"""
-        data = {'username': username, 'password': password}
-        return self.client._make_request('POST', '/app/token/', data)
-
-    def refresh_token(self, refresh: str) -> Dict[str, Any]:
-        """Refresh an access token using a refresh token"""
-        data = {'refresh': refresh}
-        return self.client._make_request('POST', '/app/token/refresh/', data)

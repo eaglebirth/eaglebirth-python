@@ -215,3 +215,21 @@ class UserManagementResource(BaseResource):
         """Validate verification code sent to email"""
         data = {'code': code, 'code_id': code_id}
         return self.client._make_request('POST', '/app/users/validate_code_via_email_for_app_user/', data)
+
+    def exchange_code_for_user(self, code: str, code_verifier: str) -> Dict[str, Any]:
+        """
+        Exchange authorization code for user session data (OAuth PKCE flow).
+
+        This is used after a user authenticates through EagleBirth Auth UI.
+        The Auth UI redirects back to your app with a 'code', and you exchange
+        it for the user's information and session tokens.
+
+        Args:
+            code: Authorization code from OAuth redirect
+            code_verifier: PKCE code verifier that matches the code_challenge
+
+        Returns:
+            User session data with access/refresh tokens and user information
+        """
+        data = {'code': code, 'code_verifier': code_verifier}
+        return self.client._make_request('POST', '/app/users/sign_app_user_in/', data)

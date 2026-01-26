@@ -13,7 +13,6 @@ from .resources import (
     QRCodeResource,
     ImageProcessingResource,
     StorageResource,
-    AuthenticationResource,
 )
 from .resources.users import UserManagementResource
 
@@ -78,7 +77,6 @@ class EagleBirth:
         self.qr = QRCodeResource(self)
         self.vision = ImageProcessingResource(self)
         self.storage = StorageResource(self)
-        self.auth = AuthenticationResource(self)
         self.users = UserManagementResource(self)
 
     def _make_request(
