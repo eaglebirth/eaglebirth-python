@@ -15,6 +15,7 @@ from .resources import (
     StorageResource,
     AuthenticationResource,
 )
+from .resources.users import UserManagementResource
 
 
 class EagleBirth:
@@ -78,6 +79,7 @@ class EagleBirth:
         self.vision = ImageProcessingResource(self)
         self.storage = StorageResource(self)
         self.auth = AuthenticationResource(self)
+        self.users = UserManagementResource(self)
 
     def _make_request(
         self,
