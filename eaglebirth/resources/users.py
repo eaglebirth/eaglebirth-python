@@ -2,7 +2,7 @@
 
 import logging
 from typing import Optional, Dict, Any
-from .base import BaseResource
+from . import BaseResource
 from ..exceptions import APIError
 
 logger = logging.getLogger(__name__)

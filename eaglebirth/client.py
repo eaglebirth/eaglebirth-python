@@ -35,7 +35,7 @@ class EagleBirth:
     """
 
     PRODUCTION_URL = "https://eaglebirth.com/api"
-    SANDBOX_URL = "https://sandbox.eaglebirth.com/api"
+    SANDBOX_URL = "http://localhost:8000"
 
     def __init__(
         self,
@@ -53,8 +53,12 @@ class EagleBirth:
         """
         if not api_key:
             raise ValueError("API key is required")
-
-        if not api_key.startswith(('eb_test_', 'eb_live_')):
+        print('api_key: ', api_key)
+        # Validate format only for API keys (not for OAuth access tokens/JWT)
+        # OAuth tokens don't start with 'eb_' prefix and are typically longer (JWT)
+        if not api_key.startswith(('eb_test_', 'eb_live_')) and len(api_key) < 100:
+            # Short keys that don't start with eb_ are invalid
+            # Long tokens (like JWT which are 200+ chars) are allowed through
             raise ValueError("Invalid API key format. Must start with 'eb_test_' or 'eb_live_'")
 
         self.api_key = api_key

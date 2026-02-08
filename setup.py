@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="eaglebirth",
-    version="1.1.0",
+    version="1.1.3",
     author="EagleBirth",
     author_email="contact@eaglebirth.com",
     description="Official Python SDK for EagleBirth API",

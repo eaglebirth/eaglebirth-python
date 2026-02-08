@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# pypi
+.pypirc
+./upload_instructions.md
+
 # Distribution / packaging
 .Python
 build/
